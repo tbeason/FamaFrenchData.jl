@@ -54,10 +54,15 @@ To get a list of all of the available table names, use `listFamaFrench`.
 FFnames = listFamaFrench()
 ```
 
+## Additional Notes
 
+ - Original files use `-99.99` or `-999` to encode missing values, I attempt to replace these with `missing`.
+ - Original files have no column heading for column 1, I name this column `:Date`. It maintains the parsed type of `Int` because it can take several different forms: `20011231`,`200112`,`2001`.
+ - I have not verified that all tables are parsed correctly.
+ - Breakpoints files require the keyword argument `header=false`
 
 
 ## Disclaimer
 
 
-I am not affiliated with the Ken French Data Library. This package does not "ship with" the data, just provides easier access to it.
+I am not affiliated with the Ken French Data Library. This package does not "ship with" the data, just provides easier access to it. Other than the changes that I have explicitly stated, I do not alter the data; however, it is your responsibility to verify that the data is correct.
