@@ -13,9 +13,9 @@
 [![Documentation](https://img.shields.io/badge/docs-master-blue.svg)](https://tbeason.github.io/FamaFrenchData.jl/dev)
 -->
 
-A Julia package for easy access to the [Ken French Data Library](https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html). The Ken French Data Library is a one of the most highly used publicly available data sources for financial investments and asset pricing research.
+A Julia package for easy access to the [Ken French Data Library](https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html). The Ken French Data Library is one of the most highly used publicly available data sources for financial investments and asset pricing research.
 
-Working with the data is sometimes tedious because the downloadable files come (1) compressed in `zip` containers and (2) having non-standard `csv` layouts. This package handles both of those hurdles, allowing the user to get to the data faster.
+Working with the data is sometimes tedious because the downloadable files come (1) compressed in `zip` archives and (2) having non-standard `csv` layouts. This package handles both of those hurdles, allowing users to get to the data faster.
 
 
 ## Usage
