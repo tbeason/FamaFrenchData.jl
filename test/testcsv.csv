@@ -1,0 +1,14 @@
+This is an annoying way to make csv files.
+
+Hello, here is a silly place to put a line with a comma.
+
+,col2,col3
+20010501,1.0,-0.5
+20010502,0.1,0.5
+
+Surpise: there is another table here
+,col2,col3
+20200101,1.0,-0.5
+20200102,0.1,0.5
+
+Made by me.
