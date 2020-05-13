@@ -153,7 +153,7 @@ function parsefile(lines;kwargs...)
     for i in 1:ntables
         ios = IOBuffer(string(stringarray[tranges[i]]...))
         dfvec[i] = CSV.read(ios;csvopt...)
-        rename!(dfvec[i],first(names(dfvec[i])) => :Date)
+        rename!(dfvec[i],Symbol(first(names(dfvec[i]))) => :Date)
         close(ios)
     end
     if isnothing(first(nameranges))
