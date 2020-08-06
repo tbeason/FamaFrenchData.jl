@@ -16,7 +16,7 @@ export readFamaFrench, downloadFamaFrench, listFamaFrench
 const KFDLftp = "http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/"
 
 """
-`readFamaFrench(ffn;kwargs...)`
+    readFamaFrench(ffn;kwargs...)
 
 `ffn` can be the table name (in which case it is retreived from the web) or a path to the local file.
 `kwargs` are passed to `CSV.read`. Missing values (`-99.99` or `-999`) are replaced with `missing`.
@@ -46,7 +46,7 @@ end
 
 
 """
-`downloadFamaFrench(savename,ffn)`
+    downloadFamaFrench(savename,ffn)
 
 Saves the extracted CSV file from `ffn` to local file `savename`.
 """
@@ -66,13 +66,13 @@ end
 
 
 """
-`listFamaFrench(;refresh=false)`
+    listFamaFrench(;refresh=false)
 
 Returns a vector of possible table names. Reads from `listFamaFrench.txt`.
 When `refresh = true`, first crawls the website to find current list of tables, then overwrites `listFamaFrench.txt` with this list.
 The selection of tables is rarely changed, so the provided list is likely sufficient.
 """
-function listFamaFrench(;refresh = false)
+function listFamaFrench(;refresh::Bool = false)
     LFF_file = abspath(joinpath(@__DIR__, "..", "listFamaFrench.txt"))
     if refresh
         # grabs filenames from website
@@ -104,12 +104,12 @@ end
 # UNEXPORTED FUNCTIONS
 ########################################
 """
-parsefile(lines;kwargs...)
+    parsefile(lines;kwargs...)
 
 The workhorse function behind `readFamaFrench`.
 
-`lines` is an `IO` 
-`kwargs` are passed to `CSV.read`. Missing values (`-99.99` or `-999`) are replaced with `missing`.
+`lines` is an `IO`.
+`kwargs` are passed to `CSV.File`. Missing values (`-99.99` or `-999`) are replaced with `missing`.
 
 Returns three pieces:
 
@@ -120,7 +120,7 @@ Returns three pieces:
     - `filenotes::String` - notes at the top of the file
 """
 function parsefile(lines;kwargs...)
-    csvopt = (missingstrings = ["-99.99","-999"],normalizenames = true,copycols = true,kwargs...)
+    csvopt = (missingstrings = ["-99.99","-999"],normalizenames = true,kwargs...)
 
     stringarray = readlines(lines,keep=true)
     striparray = strip.(stringarray)
@@ -152,7 +152,7 @@ function parsefile(lines;kwargs...)
     dfvec = Vector{DataFrame}(undef,ntables)
     for i in 1:ntables
         ios = IOBuffer(string(stringarray[tranges[i]]...))
-        dfvec[i] = CSV.read(ios;csvopt...)
+        dfvec[i] = CSV.File(ios;csvopt...) |> DataFrame
         rename!(dfvec[i],Symbol(first(names(dfvec[i]))) => :Date)
         close(ios)
     end
@@ -171,7 +171,7 @@ end
 
 
 """
-`pathtoFamaFrench(ffn)`
+    pathtoFamaFrench(ffn)
 
 Generates the full web path to the file.
 """
@@ -181,7 +181,7 @@ pathtoFamaFrench(ffn) = joinpath(KFDLftp,string(ffn, "_CSV.zip"))
 
 
 """
-lastornothing(x) = isempty(x) ? nothing : last(x)
+    lastornothing(x) = isempty(x) ? nothing : last(x)
 
 A helper function.
 """
