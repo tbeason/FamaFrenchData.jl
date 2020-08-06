@@ -19,7 +19,7 @@ const KFDLftp = "http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/"
     readFamaFrench(ffn;kwargs...)
 
 `ffn` can be the table name (in which case it is retreived from the web) or a path to the local file.
-`kwargs` are passed to `CSV.read`. Missing values (`-99.99` or `-999`) are replaced with `missing`.
+`kwargs` are passed to `CSV.File`. Missing values (`-99.99` or `-999`) are replaced with `missing`.
 
 Returns three pieces:
 
