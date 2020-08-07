@@ -1,13 +1,13 @@
 # FamaFrenchData.jl
 
-[![Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://tbeason.github.io/FamaFrenchData.jl/stable)
-<!--[![Documentation](https://img.shields.io/badge/docs-master-blue.svg)](https://tbeason.github.io/FamaFrenchData.jl/dev)-->
-![Lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)
+<!-- [![Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://tbeason.github.io/FamaFrenchData.jl/stable) -->
 <!-- ![Lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg) -->
 <!-- ![Lifecycle](https://img.shields.io/badge/lifecycle-stable-green.svg) -->
 <!-- ![Lifecycle](https://img.shields.io/badge/lifecycle-retired-orange.svg) -->
 <!-- ![Lifecycle](https://img.shields.io/badge/lifecycle-archived-red.svg) -->
 <!-- ![Lifecycle](https://img.shields.io/badge/lifecycle-dormant-blue.svg)  -->
+[![Documentation](https://img.shields.io/badge/docs-master-blue.svg)](https://tbeason.github.io/FamaFrenchData.jl/dev)
+![Lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)
 [![Build Status](https://travis-ci.com/tbeason/FamaFrenchData.jl.svg?branch=master)](https://travis-ci.com/tbeason/FamaFrenchData.jl)
 [![codecov.io](http://codecov.io/github/tbeason/FamaFrenchData.jl/coverage.svg?branch=master)](http://codecov.io/github/tbeason/FamaFrenchData.jl?branch=master)
 
@@ -27,7 +27,7 @@ The package exports 3 functions: `readFamaFrench`, `downloadFamaFrench`, and `li
 
 For help with any of these functions, use `?` at the REPL (eg. `?readFamaFrench`).
 
-Please consult the online [documentation](https://tbeason.github.io/FamaFrenchData.jl/stable) for additional detail.
+Please consult the online [documentation](https://tbeason.github.io/FamaFrenchData.jl/dev) for additional detail.
 
 ## Example 
 The Fama-French 3 factor model is a commonly used empirical asset pricing model. This example retrieves the full time series of FF3 monthly and annual returns.
