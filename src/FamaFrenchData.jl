@@ -120,31 +120,16 @@ Returns three pieces:
     - `filenotes::String` - notes at the top of the file
 """
 function parsefile(lines;kwargs...)
-    csvopt = (missingstrings = ["-99.99","-999"],normalizenames = true,kwargs...)
+    csvopt = (missingstrings = ["-99.99","-999"],normalizenames = false,kwargs...)
 
     stringarray = readlines(lines,keep=true)
     striparray = strip.(stringarray)
     splits = split.(stringarray,",")
-    ncol = maximum(length(s) for s in splits)
+    ncols = length.(splits)
 
-    trows = findall(s->length(s)==ncol,splits)
-    breaks = findall(!isequal(1),diff(trows))
-    nbreaks = length(breaks)
-    ntables = nbreaks + 1
+    tranges = contiguousblocks(ncols)
+    ntables = length(tranges)
 
-    tranges = Vector{UnitRange{Int64}}(undef,ntables)
-
-    if ntables == 1
-        tranges[1] = trows[1]:trows[end]
-    else
-        tranges[1] = trows[1]:trows[breaks[1]]
-        tranges[ntables] = trows[breaks[end]+1]:trows[end]
-        if ntables > 2
-            for n in 2:ntables-1
-                tranges[n] = trows[breaks[n-1]+1]:trows[breaks[n]]
-            end
-        end
-    end
     allempty = findall(isempty,striparray)
     lastempty = [lastornothing(filter(x -> x < k,allempty)) for k in first.(tranges)]
     nameranges = [isnothing(lastempty[i]) ? nothing : range(lastempty[i],first(tranges[i])-1,step=1) for i in 1:ntables] 
@@ -157,15 +142,60 @@ function parsefile(lines;kwargs...)
         close(ios)
     end
     if isnothing(first(nameranges))
-        notestop = trows[1]-1
-        tablenotes = [i==1 ? "" : string(striparray[nameranges[i]]...) for i in 1:ntables]
+        notestop = tranges[1][1]-1
+        tablenotes = [i==1 ? "" : strip_rn(string(striparray[nameranges[i]]...)) for i in 1:ntables]
     else
-        tablenotes = [string(striparray[nameranges[i]]...) for i in 1:ntables]
+        tablenotes = [strip_rn(string(striparray[nameranges[i]]...)) for i in 1:ntables]
         notestop = first(lastempty)
     end
-    filenotes = string(lines.name,"  \n",striparray[1:notestop]...)
+    filenotes = strip_rn(string(lines.name,"  ",strip.(stringarray[1:notestop])...))
 
     return dfvec,tablenotes,filenotes
+end
+
+
+strip_rn(s) = foldl(replace,["\r"=>"", "\n"=>" "],init=s)
+
+
+
+"""
+    contiguousblocks(x)
+
+Takes in a vector of `Int` and returns the portions containing contiguous blocks (sequences that increase by 1).
+
+Requires a sequence to have length 3 or greater.
+"""
+function contiguousblocks(x::AbstractVector{T}) where {T}
+    M = maximum(x)
+    L = length(x)
+    tranges = Vector{UnitRange{Int64}}(undef,0)
+    for i in 2:M
+        tmpi = findall(==(i),x)
+        isempty(tmpi) && continue
+        starti = tmpi[1]
+        lasti = tmpi[1]
+        for (j,n) in enumerate(tmpi)
+            j==1 && continue
+            distance = n-lasti
+            if distance==1
+                lasti = n
+                if j==length(tmpi)
+                    R = starti:lasti
+                    # println(R)
+                    length(R)>=3 && push!(tranges,R)
+                end
+                continue
+            else
+                R = starti:lasti
+                # println(R)
+                length(R)>=3 && push!(tranges,R)
+                starti = n
+                lasti = n
+            end
+        end
+
+    end
+    return tranges
 end
 
 
