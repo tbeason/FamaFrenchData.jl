@@ -137,7 +137,7 @@ function parsefile(lines;kwargs...)
     dfvec = Vector{DataFrame}(undef,ntables)
     for i in 1:ntables
         ios = IOBuffer(string(stringarray[tranges[i]]...))
-        dfvec[i] = CSV.File(ios;csvopt...) |> DataFrame
+        dfvec[i] = CSV.read(ios,DataFrame;csvopt...)
         rename!(dfvec[i],Symbol(first(names(dfvec[i]))) => :Date)
         close(ios)
     end
