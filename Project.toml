@@ -1,19 +1,18 @@
 name = "FamaFrenchData"
 uuid = "bd2a388e-9788-4ef7-9fc3-f4c919ffde82"
 authors = ["Tyler Beason <tbeas12@gmail.com>"]
-version = "0.3.1"
+version = "0.4.0"
 
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
-HTTP = "cd3eb016-35fb-5094-929b-558a96fad6f3"
+Downloads = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
 ZipFile = "a5390f91-8eb1-5f08-bee0-b1d1ffed6cea"
 
 [compat]
 CSV = "^0.7.6, 0.8"
 DataFrames = "0.19.4, 0.20, 0.21, 0.22, 1"
-HTTP = "^0.8.11, 0.9"
 ZipFile = "0.8.4, 0.9"
 julia = "^1.3"
 

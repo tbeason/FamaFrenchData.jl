@@ -3,7 +3,7 @@ Julia package for easy access to the Ken French Data Library files. See `readFam
 """
 module FamaFrenchData
 
-using HTTP
+using Downloads
 using CSV
 using ZipFile
 using DataFrames
@@ -31,7 +31,8 @@ Returns three pieces:
 """
 function readFamaFrench(ffn;kwargs...)
     if !isfile(ffn)
-        io = IOBuffer(HTTP.get(pathtoFamaFrench(ffn)).body)
+        io = IOBuffer()
+        Downloads.download(pathtoFamaFrench(ffn),io)
         z = ZipFile.Reader(io)
         ff = first(z.files)
     else
@@ -52,7 +53,8 @@ Saves the extracted CSV file from `ffn` to local file `savename`.
 """
 function downloadFamaFrench(savename,ffn)
     open(savename,"w") do f
-        io = IOBuffer(HTTP.get(pathtoFamaFrench(ffn)).body)
+        io = IOBuffer()
+        Downloads.download(pathtoFamaFrench(ffn),io)
         z = ZipFile.Reader(io)
         ff = first(z.files)
         for s in readlines(ff)
@@ -77,7 +79,10 @@ function listFamaFrench(;refresh::Bool = false)
     if refresh
         # grabs filenames from website
         wname  = "https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html" 
-        hs=String(HTTP.request("GET",wname).body)
+        io = IOBuffer()
+        Downloads.download(wname,io)
+        hs = String(take!(io))
+        close(io)
         regx = r"(?<=ftp\/)(.*)(?=_CSV)"
         res=collect(eachmatch(regx,hs)) 
         nms = getfield.(res,:match)
