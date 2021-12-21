@@ -25,9 +25,24 @@ Returns three pieces:
 
     - `tables::Vector{DataFrame}` - the extracted tables
 
-    - `tablenotes::Vector{String}` - any notes to the 
+    - `tablenotes::Vector{String}` - any notes to the tables
     
     - `filenotes::String` - notes at the top of the file
+
+Example Usage:
+
+```julia
+using DataFrames, FamaFrenchData
+
+# read the Fama-French 3 factors (monthly and annual)
+tables, tablenotes, filenotes = readFamaFrench("F-F_Research_Data_Factors")
+
+# read the Fama-French 3 factors (daily)
+tablesd, tablenotesd, filenotesd = readFamaFrench("F-F_Research_Data_Factors_Daily")
+
+# read the 25 Size-B/M portfolios (monthly and annual)
+tables25, tablenotes25, filenotes25 = readFamaFrench("25_Portfolios_5x5")
+```
 """
 function readFamaFrench(ffn;kwargs...)
     if !isfile(ffn)
@@ -125,7 +140,7 @@ Returns three pieces:
     - `filenotes::String` - notes at the top of the file
 """
 function parsefile(lines;kwargs...)
-    csvopt = (missingstrings = ["-99.99","-999"],normalizenames = false,kwargs...)
+    csvopt = (missingstring = ["-99.99","-999"],normalizenames = false,kwargs...)
 
     stringarray = readlines(lines,keep=true)
     striparray = strip.(stringarray)

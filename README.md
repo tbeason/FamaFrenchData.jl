@@ -35,10 +35,19 @@ The Fama-French 3 factor model is a commonly used empirical asset pricing model.
 ```julia
 using FamaFrenchData, DataFrames
 
+# read the Fama-French 3 factors (monthly and annual)
 tables, tablenotes, filenotes = readFamaFrench("F-F_Research_Data_Factors")
 
 FF3_monthly = tables[1]
 FF3_annual = tables[2]
+
+# read the Fama-French 3 factors (daily)
+tablesd, tablenotesd, filenotesd = readFamaFrench("F-F_Research_Data_Factors_Daily")
+FF3_daily = tables[1]
+
+# read the 25 Size-B/M portfolios (monthly and annual)
+tables25, tablenotes25, filenotes25 = readFamaFrench("25_Portfolios_5x5")
+FF_ME_BM_25 = tables25[1]
 ```
 
 
