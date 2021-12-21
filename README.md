@@ -27,7 +27,7 @@ The package exports 3 functions: `readFamaFrench`, `downloadFamaFrench`, and `li
 
 For help with any of these functions, use `?` at the REPL (eg. `?readFamaFrench`).
 
-Please consult the online [documentation](https://tbeason.github.io/FamaFrenchData.jl/dev) for additional detail.
+Please consult the online [documentation](https://tbeason.github.io/FamaFrenchData.jl/stable) for additional detail.
 
 ## Example 
 The Fama-French 3 factor model is a commonly used empirical asset pricing model. This example retrieves the full time series of FF3 monthly and annual returns.
