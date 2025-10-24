@@ -7,7 +7,7 @@
 <!-- ![Lifecycle](https://img.shields.io/badge/lifecycle-archived-red.svg) -->
 <!-- ![Lifecycle](https://img.shields.io/badge/lifecycle-dormant-blue.svg)  -->
 [![Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://tbeason.github.io/FamaFrenchData.jl/stable)
-![Lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)
+![Lifecycle](https://img.shields.io/badge/lifecycle-stable-green.svg)
 [![CI](https://github.com/tbeason/FamaFrenchData.jl/workflows/CI/badge.svg)](https://github.com/tbeason/FamaFrenchData.jl/actions?query=workflow%3ACI)
 [![codecov.io](http://codecov.io/github/tbeason/FamaFrenchData.jl/coverage.svg?branch=master)](http://codecov.io/github/tbeason/FamaFrenchData.jl?branch=master)
 
