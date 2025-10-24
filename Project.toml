@@ -1,7 +1,7 @@
 name = "FamaFrenchData"
 uuid = "bd2a388e-9788-4ef7-9fc3-f4c919ffde82"
 authors = ["Tyler Beason <tbeas12@gmail.com>"]
-version = "0.4.4"
+version = "0.5.0"
 
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
