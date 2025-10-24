@@ -8,7 +8,7 @@ To add the package, type `] add FamaFrenchData` at the Julia REPL.
 
 Once added, type `using FamaFrenchData` to import the package.
 
-The package exports 3 functions: `readFamaFrench`, `downloadFamaFrench`, and `listFamaFrench`.
+The package exports 4 functions: `readFamaFrench`, `downloadFamaFrench`, `listFamaFrench`, and `clearFamaFrenchCache`.
 
 For help with any of these functions, use `?` at the REPL (eg. `?readFamaFrench`).
 
@@ -41,6 +41,34 @@ using FamaFrenchData
 FFnames = listFamaFrench()
 ```
 
+## Caching
+
+The package includes automatic caching functionality using [Scratch.jl](https://github.com/JuliaPackaging/Scratch.jl) to improve performance and reduce network requests. Downloaded data is cached locally and automatically expires after 24 hours (since the data is updated at most daily).
+
+### How Caching Works
+
+- **First call**: Downloads data from the web and caches it in a persistent scratch space
+- **Subsequent calls**: Uses cached data if it's less than 24 hours old
+- **After 24 hours**: Automatically downloads fresh data and updates the cache
+
+### Customizing Cache Behavior
+
+```julia
+# Use cache with default 24-hour expiration
+tables, tablenotes, filenotes = readFamaFrench("F-F_Research_Data_Factors")
+
+# Bypass cache for a specific call (always download fresh)
+tables, tablenotes, filenotes = readFamaFrench("F-F_Research_Data_Factors", use_cache=false)
+
+# Use cache with custom expiration (e.g., 12 hours)
+tables, tablenotes, filenotes = readFamaFrench("F-F_Research_Data_Factors", cache_max_age=12)
+
+# Clear all cached data
+clearFamaFrenchCache()
+```
+
+The cache is stored in a scratch space managed by Julia, which means it persists across Julia sessions and is automatically cleaned up when the package is removed.
+
 ## Additional Notes
 
  - Original files use `-99.99` or `-999` to encode missing values, I attempt to replace these with `missing`.
@@ -62,4 +90,5 @@ I am not affiliated with the Ken French Data Library. This package does not "shi
 readFamaFrench
 downloadFamaFrench
 listFamaFrench
+clearFamaFrenchCache
 ```
