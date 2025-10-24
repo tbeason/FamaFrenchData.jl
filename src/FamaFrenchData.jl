@@ -7,18 +7,20 @@ using Downloads
 using CSV
 using ZipFile
 using DataFrames
+using Scratch
 import Dates: now
 
 
 
-export readFamaFrench, downloadFamaFrench, listFamaFrench
+export readFamaFrench, downloadFamaFrench, listFamaFrench, clearFamaFrenchCache
 
 const KFDLftp = "http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/"
 
 """
-    readFamaFrench(ffn;kwargs...)
+    readFamaFrench(ffn; use_cache=true, cache_max_age=24, kwargs...)
 
 `ffn` can be the table name (in which case it is retreived from the web) or a path to the local file.
+`use_cache` controls whether to use cached data (default: true). Cache automatically expires after `cache_max_age` hours (default: 24).
 `kwargs` are passed to `CSV.File`. Missing values (`-99.99` or `-999`) are replaced with `missing`.
 
 Returns three pieces:
@@ -26,7 +28,7 @@ Returns three pieces:
     - `tables::Vector{DataFrame}` - the extracted tables
 
     - `tablenotes::Vector{String}` - any notes to the tables
-    
+
     - `filenotes::String` - notes at the top of the file
 
 Example Usage:
@@ -42,19 +44,60 @@ tablesd, tablenotesd, filenotesd = readFamaFrench("F-F_Research_Data_Factors_Dai
 
 # read the 25 Size-B/M portfolios (monthly and annual)
 tables25, tablenotes25, filenotes25 = readFamaFrench("25_Portfolios_5x5")
+
+# disable caching for a specific call
+tables, tablenotes, filenotes = readFamaFrench("F-F_Research_Data_Factors", use_cache=false)
+
+# use cache with 12-hour expiration instead of 24
+tables, tablenotes, filenotes = readFamaFrench("F-F_Research_Data_Factors", cache_max_age=12)
 ```
 """
-function readFamaFrench(ffn;kwargs...)
-    if !isfile(ffn)
-        io = IOBuffer()
-        Downloads.download(pathtoFamaFrench(ffn),io)
-        z = ZipFile.Reader(io)
-        ff = first(z.files)
-    else
+function readFamaFrench(ffn; use_cache::Bool=true, cache_max_age::Int=24, kwargs...)
+    # If ffn is already a file path, use it directly (existing behavior)
+    if isfile(ffn)
         ff = open(ffn)
+        tables, tablenotes, filenotes = parsefile(ff;kwargs...)
+        close(ff)
+        return tables, tablenotes, filenotes
     end
+
+    # Check if we should use cache
+    cached_path = get_cached_file_path(ffn)
+    if use_cache && is_cache_valid(cached_path, cache_max_age)
+        # Use cached file
+        ff = open(cached_path)
+        tables, tablenotes, filenotes = parsefile(ff;kwargs...)
+        close(ff)
+        return tables, tablenotes, filenotes
+    end
+
+    # Download fresh data
+    io = IOBuffer()
+    Downloads.download(pathtoFamaFrench(ffn), io)
+    z = ZipFile.Reader(io)
+    ff = first(z.files)
+
+    # Parse the data
     tables, tablenotes, filenotes = parsefile(ff;kwargs...)
     close(ff)
+
+    # Save to cache if caching is enabled
+    if use_cache
+        # Re-download to cache file (since we already closed the zip reader)
+        io2 = IOBuffer()
+        Downloads.download(pathtoFamaFrench(ffn), io2)
+        z2 = ZipFile.Reader(io2)
+        ff2 = first(z2.files)
+
+        # Write to cache file
+        open(cached_path, "w") do f
+            for line in readlines(ff2)
+                println(f, line)
+            end
+        end
+        close(ff2)
+    end
+
     return tables, tablenotes, filenotes
 end
 
@@ -120,9 +163,73 @@ end
 
 
 
+"""
+    clearFamaFrenchCache()
+
+Clears all cached Fama-French data files. Returns the number of files deleted.
+"""
+function clearFamaFrenchCache()
+    cache_dir = get_cache_dir()
+    if !isdir(cache_dir)
+        return 0
+    end
+    files = readdir(cache_dir, join=true)
+    count = 0
+    for f in files
+        if isfile(f)
+            rm(f)
+            count += 1
+        end
+    end
+    return count
+end
+
+
 ########################################
 # UNEXPORTED FUNCTIONS
 ########################################
+
+"""
+    get_cache_dir()
+
+Returns the scratch space directory for caching Fama-French data files.
+Creates the directory if it doesn't exist.
+"""
+function get_cache_dir()
+    cache_dir = @get_scratch!("fama_french_cache")
+    return cache_dir
+end
+
+"""
+    get_cached_file_path(ffn)
+
+Returns the full path to the cached file for a given Fama-French dataset name.
+"""
+function get_cached_file_path(ffn)
+    cache_dir = get_cache_dir()
+    # Use a sanitized version of the name for the filename
+    safe_name = replace(string(ffn), r"[^a-zA-Z0-9_-]" => "_")
+    return joinpath(cache_dir, safe_name * ".csv")
+end
+
+"""
+    is_cache_valid(filepath, max_age_hours=24)
+
+Checks if a cached file exists and is younger than max_age_hours.
+Returns true if cache is valid, false otherwise.
+"""
+function is_cache_valid(filepath, max_age_hours=24)
+    if !isfile(filepath)
+        return false
+    end
+
+    # Check file modification time
+    file_mtime = stat(filepath).mtime
+    current_time = time()
+    age_hours = (current_time - file_mtime) / 3600
+
+    return age_hours < max_age_hours
+end
 """
     parsefile(lines;kwargs...)
 

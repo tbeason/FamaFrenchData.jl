@@ -23,11 +23,35 @@ To add the package, type `] add FamaFrenchData` at the Julia REPL.
 
 Once added, type `using FamaFrenchData` to import the package.
 
-The package exports 3 functions: `readFamaFrench`, `downloadFamaFrench`, and `listFamaFrench`.
+The package exports 4 functions: `readFamaFrench`, `downloadFamaFrench`, `listFamaFrench`, and `clearFamaFrenchCache`.
 
 For help with any of these functions, use `?` at the REPL (eg. `?readFamaFrench`).
 
 Please consult the online [documentation](https://tbeason.github.io/FamaFrenchData.jl/stable) for additional detail.
+
+### Automatic Caching
+
+The package now includes automatic caching functionality to improve performance and reduce network requests. Downloaded data is cached locally and automatically expires after 24 hours (since the data is updated at most daily). This means:
+
+- **First call**: Downloads data from the web and caches it locally
+- **Subsequent calls**: Uses cached data if it's less than 24 hours old
+- **After 24 hours**: Automatically downloads fresh data and updates the cache
+
+You can customize this behavior:
+
+```julia
+# Use cache with default 24-hour expiration
+tables, tablenotes, filenotes = readFamaFrench("F-F_Research_Data_Factors")
+
+# Bypass cache for a specific call
+tables, tablenotes, filenotes = readFamaFrench("F-F_Research_Data_Factors", use_cache=false)
+
+# Use cache with custom expiration (12 hours)
+tables, tablenotes, filenotes = readFamaFrench("F-F_Research_Data_Factors", cache_max_age=12)
+
+# Clear all cached data
+clearFamaFrenchCache()
+```
 
 ## Example 
 The Fama-French 3 factor model is a commonly used empirical asset pricing model. This example retrieves the full time series of FF3 monthly and annual returns.
